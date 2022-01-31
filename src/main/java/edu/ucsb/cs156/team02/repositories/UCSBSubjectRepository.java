@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UCSBSubjectRepository extends CrudRepository<UCSBSubject, Long> {
-  Iterable<UCSBSubject> findAllBySubject(String subject);
+public interface UCSBSubjectRepository extends CrudRepository<UCSBSubject, String> {
+  Iterable<UCSBSubject> findBySubject(String subject);
 }
