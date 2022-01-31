@@ -10,6 +10,10 @@ The GitHub actions script to deploy the Storybook to QA requires some configurat
 
 If these repos are not yet setup, see the setup steps in [`docs/storybook.md`](docs/storybook.md).
 
+Heroku Deployments here:
+* Prod: <https://w22-5pm-2-team02.herokuapp.com/>
+* QA: <https://w22-5pm-2-team02-qa.herokuapp.com/>
+
 # Setup before running application
 
 Before running the application for the first time,
