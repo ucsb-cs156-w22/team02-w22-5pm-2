@@ -38,8 +38,8 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
     @MockBean
     UserRepository userRepository; // Needed to run tests bc of interdependency
 
-    // Authorization tests for /api/collegiateSubreddit/all
 
+    // Authorization tests for /api/collegiateSubreddit/all
     @Test
     public void api_collegiateSubreddit_all__logged_out__returns_403() throws Exception {
         mockMvc.perform(get("/api/collegiateSubreddits/all"))
@@ -67,10 +67,56 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
                 .andExpect(status().isOk());
     }
 
-    //empty get all
 
-    //post one get all
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit_all__user_logged_in() throws Exception {
 
-    //post two get all
+        // arrange
+        CollegiateSubreddit csr1 = CollegiateSubreddit.builder().name("CollegiateSubreddit 1").location("Location 1").subreddit("CollegiateSubreddit 1").id(1L).build();
+        CollegiateSubreddit csr2 = CollegiateSubreddit.builder().name("CollegiateSubreddit 2").location("Location 2").subreddit("CollegiateSubreddit 2").id(2L).build();
+
+        ArrayList<CollegiateSubreddit> expectedCollegiateSubreddits = new ArrayList<>();
+        expectedCollegiateSubreddits.addAll(Arrays.asList(csr1, csr2));
+        when(collegiateSubredditRepository.findAll()).thenReturn(expectedCollegiateSubreddits);
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits/all"))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(collegiateSubredditRepository, times(1)).findAll();
+        String expectedJson = mapper.writeValueAsString(expectedCollegiateSubreddits);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit_post__user_logged_in() throws Exception {
+        // arrange
+
+        CollegiateSubreddit expectedCsr = CollegiateSubreddit.builder()
+                .name("Test Name")
+                .location("Test Location")
+                .subreddit("Test Subreddit")
+                .id(0L)
+                .build();
+
+        when(collegiateSubredditRepository.save(eq(expectedCsr))).thenReturn(expectedCsr);
+
+        // act
+        MvcResult response = mockMvc.perform(
+                post("/api/collegiateSubreddits/post?name=Test Name&location=Test Location&subreddit=Test Subreddit")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(collegiateSubredditRepository, times(1)).save(expectedCsr);
+        String expectedJson = mapper.writeValueAsString(expectedCsr);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }    
 
 }
