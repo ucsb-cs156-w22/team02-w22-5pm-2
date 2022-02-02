@@ -1,14 +1,14 @@
 package edu.ucsb.cs156.team02.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.GeneratedValue;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @Data
 @AllArgsConstructor
@@ -16,14 +16,16 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity(name = "ucsb_subjects")
 public class UCSBSubject {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
-    private String subjectCode; 
-    private String subjectTranslation; 
-    private String deptCode; 
-    private String collegeCode;
-    private String relatedDeptCode;
-    private boolean inactive;
+
+  //Columns in the table
+  private String subjectCode;
+  private String subjectTranslation;
+  private String deptCode;
+  private String collegeCode;
+  private String relatedDeptCode;
+  private boolean inactive;
 }
