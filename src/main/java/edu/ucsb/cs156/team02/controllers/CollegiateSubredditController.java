@@ -34,6 +34,7 @@ import java.util.Optional;
 @Slf4j
 public class CollegiateSubredditController extends ApiController {
     
+    //Inner class helps to check if a collegiate subreddit exists, and it helps with giving an error message.
     public class CollegiateSubbreditOrError {
         Long id;
         CollegiateSubreddit collegiateSubreddit;
@@ -65,6 +66,9 @@ public class CollegiateSubredditController extends ApiController {
     public ResponseEntity<String> getCollegiateSubbredditById(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
+
+        //coe to shorted "CollegiateSubbreddit or Error"
+
         CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
 
         coe = doesCollegiateSubredditExist(coe);
@@ -93,6 +97,15 @@ public class CollegiateSubredditController extends ApiController {
     }
 
 
+    /**
+     * Pre-conditions: coe.id is value to look up, coe.collegiatesubreddit and coe.error are null
+     * 
+     * Post-condition: if todo with id coe.id exists, coe.collegiateSubreddit now refers to it, and
+     * error is null.
+     * Otherwise, collegiateSubreddit with id coe.id does not exist, and error is a suitable return
+     * value to
+     * report this error condition.
+     */
     public CollegiateSubbreditOrError doesCollegiateSubredditExist(CollegiateSubbreditOrError coe) {
 
         Optional<CollegiateSubreddit> optionalCollegiateSubbreddit = collegiateSubredditRepository.findById(coe.id);
