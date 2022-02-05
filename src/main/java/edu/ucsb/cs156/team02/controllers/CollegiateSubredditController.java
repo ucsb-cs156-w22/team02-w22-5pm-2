@@ -62,20 +62,16 @@ public class CollegiateSubredditController extends ApiController {
     @ApiOperation(value = "Get a single record in CollegiateSubbreddits table (if it exists)")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
-    public ResponseEntity<String> getTodoById(
+    public ResponseEntity<String> getCollegiateSubbredditById(
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
         CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
 
-        coe = doesCollegiateSubbreditExist(coe);
+        coe = doesCollegiateSubredditExist(coe);
         if (coe.error != null) {
-            return toe.error;
+            return coe.error;
         }
-        toe = doesTodoBelongToCurrentUser(toe);
-        if (toe.error != null) {
-            return toe.error;
-        }
-        String body = mapper.writeValueAsString(toe.todo);
+        String body = mapper.writeValueAsString(coe.collegiateSubreddit);
         return ResponseEntity.ok().body(body);
     }
 
@@ -97,9 +93,9 @@ public class CollegiateSubredditController extends ApiController {
     }
 
 
-    public CollegiateSubbreditOrError doesCollegiateSubbredditExist(CollegiateSubbreditOrError coe) {
+    public CollegiateSubbreditOrError doesCollegiateSubredditExist(CollegiateSubbreditOrError coe) {
 
-        Optional<CollegiateSubreddit> optionalCollegiateSubbreddit = CollegiateSubredditRepository.findById(coe.id);
+        Optional<CollegiateSubreddit> optionalCollegiateSubbreddit = collegiateSubredditRepository.findById(coe.id);
 
         if (optionalCollegiateSubbreddit.isEmpty()) {
             coe.error = ResponseEntity
