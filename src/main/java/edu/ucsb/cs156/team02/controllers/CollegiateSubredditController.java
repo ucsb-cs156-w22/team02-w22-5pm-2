@@ -67,8 +67,7 @@ public class CollegiateSubredditController extends ApiController {
             @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
 
-        //coe to shorted "CollegiateSubbreddit or Error"
-
+        //coe to shorten "CollegiateSubbreddit or Error"
         CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
 
         coe = doesCollegiateSubredditExist(coe);
