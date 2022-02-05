@@ -119,4 +119,49 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
         assertEquals(expectedJson, responseString);
     }    
 
+
+    //Mock test find a collegiateSubbreddit by id=7 where it exists
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit__user_logged_in__returns_a_collegiateSubreddit_that_exists() throws Exception {
+
+            // arrange
+
+            CollegiateSubreddit collegiateSubreddit1 = CollegiateSubreddit.builder().name("CollegiateSubbreddit 1").location("Location 1").subreddit("Subreddit 1").id(7L).build();
+            when(collegiateSubredditRepository.findById(eq(7L))).thenReturn(Optional.of(collegiateSubreddit1));
+
+            // act
+            MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits?id=7"))
+                            .andExpect(status().isOk()).andReturn();
+
+            // assert
+
+            verify(collegiateSubredditRepository, times(1)).findById(eq(7L));
+            String expectedJson = mapper.writeValueAsString(collegiateSubreddit1);
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals(expectedJson, responseString);
+    }
+
+    // Mock test find a collegiateSubbreddit by id=7 where it does NOT exist
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit__user_logged_in__search_for_collegiateSubreddit_that_does_not_exist() throws Exception {
+
+            // arrange
+
+
+            when(collegiateSubredditRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+            // act
+            MvcResult response = mockMvc.perform(get("/api/collegiateSubreddits?id=7"))
+                            .andExpect(status().isBadRequest()).andReturn();
+
+            // assert
+
+            verify(collegiateSubredditRepository, times(1)).findById(eq(7L));
+            String responseString = response.getResponse().getContentAsString();
+            assertEquals("collegiatesubreddit with id 7 not found", responseString);
+    }
+
 }
+
