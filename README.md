@@ -4,8 +4,8 @@
 
 Storybook is here:
 
-* Production: https://ucsb-cs156-w22.github.io/ucsb-cs156-w22/team02-w22-5pm-2-docs/docs/storybook/
-* QA: https://ucsb-cs156-w22.github.io/ucsb-cs156-w22/team02-w22-5pm-2-docs-qa/docs/storybook/
+* Production: https://ucsb-cs156-w22.github.io/team02-w22-5pm-2-docs/
+* QA: https://ucsb-cs156-w22.github.io/team02-w22-5pm-2-docs-qa/
 
 The GitHub actions script to deploy the Storybook to QA requires some configuration; see [docs/github-actions.md](docs/github-actions.md) for details.
 
