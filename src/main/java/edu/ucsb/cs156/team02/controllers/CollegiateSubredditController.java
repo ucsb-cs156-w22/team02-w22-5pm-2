@@ -34,6 +34,16 @@ import java.util.Optional;
 @Slf4j
 public class CollegiateSubredditController extends ApiController {
     
+    public class CollegiateSubbreditOrError {
+        Long id;
+        CollegiateSubreddit collegiateSubreddit;
+        ResponseEntity<String> error;
+
+        public CollegiateSubbreditOrError(Long id) {
+            this.id = id;
+        }
+    }
+
     @Autowired
     CollegiateSubredditRepository collegiateSubredditRepository;
 
@@ -47,6 +57,26 @@ public class CollegiateSubredditController extends ApiController {
         loggingService.logMethod();
         Iterable<CollegiateSubreddit> csr = collegiateSubredditRepository.findAll();
         return csr;
+    }
+
+    @ApiOperation(value = "Get a single record in CollegiateSubbreddits table (if it exists)")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public ResponseEntity<String> getTodoById(
+            @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+        loggingService.logMethod();
+        CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
+
+        coe = doesCollegiateSubbreditExist(coe);
+        if (coe.error != null) {
+            return toe.error;
+        }
+        toe = doesTodoBelongToCurrentUser(toe);
+        if (toe.error != null) {
+            return toe.error;
+        }
+        String body = mapper.writeValueAsString(toe.todo);
+        return ResponseEntity.ok().body(body);
     }
 
     @ApiOperation(value = "Create a new CollegiateSubreddit")
@@ -64,6 +94,21 @@ public class CollegiateSubredditController extends ApiController {
         csr.setSubreddit(subreddit);
         CollegiateSubreddit savedCsr = collegiateSubredditRepository.save(csr);
         return savedCsr;
+    }
+
+
+    public CollegiateSubbreditOrError doesCollegiateSubbredditExist(CollegiateSubbreditOrError coe) {
+
+        Optional<CollegiateSubreddit> optionalCollegiateSubbreddit = CollegiateSubredditRepository.findById(coe.id);
+
+        if (optionalCollegiateSubbreddit.isEmpty()) {
+            coe.error = ResponseEntity
+                    .badRequest()
+                    .body(String.format("collegiatesubreddit with id %d not found", coe.id));
+        } else {
+            coe.collegiateSubreddit = optionalCollegiateSubbreddit.get();
+        }
+        return coe;
     }
 
 
