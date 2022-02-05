@@ -131,7 +131,7 @@ public class CollegiateSubredditController extends ApiController {
         if (optionalCollegiateSubbreddit.isEmpty()) {
             coe.error = ResponseEntity
                     .badRequest()
-                    .body(String.format("collegiatesubreddit with id %d not found", coe.id));
+                    .body(String.format("collegiateSubreddit with id %d not found", coe.id));
         } else {
             coe.collegiateSubreddit = optionalCollegiateSubbreddit.get();
         }
