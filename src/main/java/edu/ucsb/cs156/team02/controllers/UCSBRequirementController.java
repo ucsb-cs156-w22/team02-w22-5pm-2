@@ -2,18 +2,12 @@ package edu.ucsb.cs156.team02.controllers;
 
 
 
-import edu.ucsb.cs156.team02.entities.CollegiateSubreddit;
-import edu.ucsb.cs156.team02.entities.User;
-import edu.ucsb.cs156.team02.models.CurrentUser;
-import edu.ucsb.cs156.team02.repositories.CollegiateSubredditRepository;
+import edu.ucsb.cs156.team02.entities.UCSBRequirement;
 import edu.ucsb.cs156.team02.repositories.UCSBRequirementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import edu.ucsb.cs156.team02.entities.UCSBRequirement;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,11 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -133,9 +124,7 @@ public class UCSBRequirementController extends ApiController {
 
         if (optionalRequirement.isEmpty()) {
             //reqOrErr.error = ResponseEntity.badRequest().body(String.format("UCSBRequirement with id "+reqOrErr.id+" not found"));
-            reqOrErr.error = ResponseEntity.
-            badRequest().
-            body(String.format("UCSBRequirement with id %d not found", reqOrErr.id));
+            reqOrErr.error = ResponseEntity.badRequest().body(String.format("UCSBRequirement with id %d not found", reqOrErr.id));
         } else {
             reqOrErr.ucsbRequirement  = optionalRequirement.get();
         }
@@ -144,6 +133,7 @@ public class UCSBRequirementController extends ApiController {
     
     
     
+        
     
     
 }
@@ -157,4 +147,12 @@ private String requirementCode;
   private int units;
   private boolean inactive;
  
+
+requirementCode
+  requirementTranslation;
+  collegeCode;
+    objCode;
+    courseCount;
+    units;
+    inactive;
   */
