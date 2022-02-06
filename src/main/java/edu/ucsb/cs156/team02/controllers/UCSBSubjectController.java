@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.team02.controllers;
 
-//Unused imports are left in here in case someone else needs them for the other endpoints.
 import edu.ucsb.cs156.team02.entities.UCSBSubject;
 import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.models.CurrentUser;
@@ -29,7 +28,7 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Api(description = "UCSBSubjects")
-@RequestMapping("/api/UCSBSubjects")
+@RequestMapping("/api/ucsbSubjects")
 @RestController
 @Slf4j
 public class UCSBSubjectController extends ApiController {
@@ -51,6 +50,15 @@ public class UCSBSubjectController extends ApiController {
     @Autowired
     ObjectMapper mapper;
 
+    @ApiOperation(value = "List all UCSBSubjects")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/all")
+    public Iterable<UCSBSubject> allUCSBSubjects() {
+        loggingService.logMethod();
+        Iterable<UCSBSubject> ucsbSubject = ucsbSubjectRepository.findAll();
+        return ucsbSubject;
+    }
+
     @ApiOperation(value = "Get a single record in UCSBSubject table (if it exists)")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
@@ -67,6 +75,29 @@ public class UCSBSubjectController extends ApiController {
         }
         String body = mapper.writeValueAsString(soe.ucsbSubject);
         return ResponseEntity.ok().body(body);
+    }
+
+    @ApiOperation(value = "Create a new UCSBSubject")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/post")
+    public UCSBSubject postUCSBSubject(
+            @ApiParam("subjectCode") @RequestParam String subjectCode,
+            @ApiParam("subjectTranslation") @RequestParam String subjectTranslation,
+            @ApiParam("deptCode") @RequestParam String deptCode,
+            @ApiParam("collegeCode") @RequestParam String collegeCode,
+            @ApiParam("relatedDeptCode") @RequestParam String relatedDeptCode,
+            @ApiParam("inactive") @RequestParam Boolean inactive) {
+        loggingService.logMethod();
+
+        UCSBSubject ucsbSubject = new UCSBSubject();
+        ucsbSubject.setSubjectCode(subjectCode);
+        ucsbSubject.setSubjectTranslation(subjectTranslation);
+        ucsbSubject.setDeptCode(deptCode);
+        ucsbSubject.setCollegeCode(collegeCode);
+        ucsbSubject.setRelatedDeptCode(relatedDeptCode);
+        ucsbSubject.setInactive(inactive);
+        UCSBSubject savedUcsbSubject = ucsbSubjectRepository.save(ucsbSubject);
+        return savedUcsbSubject;
     }
 
     /**
