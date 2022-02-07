@@ -160,8 +160,50 @@ public class CollegiateSubredditControllerTests extends ControllerTestCase {
 
             verify(collegiateSubredditRepository, times(1)).findById(eq(7L));
             String responseString = response.getResponse().getContentAsString();
-            assertEquals("collegiatesubreddit with id 7 not found", responseString);
+            assertEquals("collegiateSubreddit with id 7 not found", responseString);
     }
+
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit__user_logged_in__delete_collegiateSubreddit() throws Exception {
+        // arrange
+
+        CollegiateSubreddit collegiateSubreddit1 = CollegiateSubreddit.builder().name("CollegiateSubbreddit 1").location("Location 1").subreddit("Subreddit 1").id(7L).build();
+        when(collegiateSubredditRepository.findById(eq(7L))).thenReturn(Optional.of(collegiateSubreddit1));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/collegiateSubreddits?id=7")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(collegiateSubredditRepository, times(1)).findById(7L);
+        verify(collegiateSubredditRepository, times(1)).deleteById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("collegiateSubreddit with id 7 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_collegiateSubreddit__user_logged_in__delete_collegiateSubreddit_that_does_not_exist() throws Exception {
+        // arrange
+        when(collegiateSubredditRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/collegiateSubreddits?id=7")
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+        verify(collegiateSubredditRepository, times(1)).findById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("collegiateSubreddit with id 7 not found", responseString);
+    }
+
+
 
 }
 

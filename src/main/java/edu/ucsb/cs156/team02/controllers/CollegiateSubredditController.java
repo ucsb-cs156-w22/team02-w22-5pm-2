@@ -95,6 +95,24 @@ public class CollegiateSubredditController extends ApiController {
         return savedCsr;
     }
 
+    @ApiOperation(value = "Delete a CollegiateSubreddit")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteCollegiateSubreddit(
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+
+        //coe to shorted "CollegiateSubbreddit or Error"
+        CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
+
+        coe = doesCollegiateSubredditExist(coe);
+        if (coe.error != null) {
+            return coe.error;
+        }
+
+        collegiateSubredditRepository.deleteById(id);
+        return ResponseEntity.ok().body(String.format("collegiateSubreddit with id %d deleted", id));
+    }
 
     /**
      * Pre-conditions: coe.id is value to look up, coe.collegiatesubreddit and coe.error are null
@@ -112,7 +130,7 @@ public class CollegiateSubredditController extends ApiController {
         if (optionalCollegiateSubbreddit.isEmpty()) {
             coe.error = ResponseEntity
                     .badRequest()
-                    .body(String.format("collegiatesubreddit with id %d not found", coe.id));
+                    .body(String.format("collegiateSubreddit with id %d not found", coe.id));
         } else {
             coe.collegiateSubreddit = optionalCollegiateSubbreddit.get();
         }
