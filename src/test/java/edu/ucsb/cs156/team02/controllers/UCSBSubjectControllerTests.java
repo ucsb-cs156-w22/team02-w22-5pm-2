@@ -104,7 +104,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
                 .deptCode("Test DeptCode")
                 .collegeCode("Test CollegeCode")
                 .relatedDeptCode("Test RelatedDeptCode")
-                .inactive(false)
+                .inactive(true)
                 .id(0L)
                 .build();
 
@@ -112,7 +112,7 @@ public class UCSBSubjectControllerTests extends ControllerTestCase {
 
         // act
         MvcResult response = mockMvc.perform(
-                post("/api/ucsbSubjects/post?subjectCode=Test Code&subjectTranslation=Test Translation&deptCode=Test DeptCode&collegeCode=Test CollegeCode&relatedDeptCode=Test RelatedDeptCode&inactive=false")
+                post("/api/ucsbSubjects/post?subjectCode=Test Code&subjectTranslation=Test Translation&deptCode=Test DeptCode&collegeCode=Test CollegeCode&relatedDeptCode=Test RelatedDeptCode&inactive=true")
                         .with(csrf()))
                 .andExpect(status().isOk()).andReturn();
 
