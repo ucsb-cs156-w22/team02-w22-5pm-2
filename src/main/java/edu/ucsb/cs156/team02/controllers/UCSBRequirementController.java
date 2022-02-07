@@ -1,7 +1,5 @@
 package edu.ucsb.cs156.team02.controllers;
 
-
-
 import edu.ucsb.cs156.team02.entities.UCSBRequirement;
 import edu.ucsb.cs156.team02.repositories.UCSBRequirementRepository;
 import io.swagger.annotations.Api;
@@ -24,15 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.util.Optional;
 
-
-
 @Api(description = "UCSBRequirements")
 @RequestMapping("/api/UCSBRequirements")
 @RestController
 @Slf4j
-
 public class UCSBRequirementController extends ApiController {
-    ObjectMapper mapper= new ObjectMapper();
 
     //have to make an error class incase requiremetn is MIA
     //full disclosure: I wouldn't have thought to make this if it wasn't for the example
@@ -49,7 +43,9 @@ public class UCSBRequirementController extends ApiController {
 
     @Autowired
     UCSBRequirementRepository ucsbRequirementsRepository;
-
+    
+    @Autowired 
+    ObjectMapper mapper;
     
 //this will get and list all of the requirments in the db
 //note there is no required Admin privl as this info is usefull to the end user
@@ -58,7 +54,6 @@ public class UCSBRequirementController extends ApiController {
     @GetMapping("/all")
     public Iterable<UCSBRequirement> allUsersRequirements() {
         loggingService.logMethod();
-        
         Iterable<UCSBRequirement> requirments = ucsbRequirementsRepository.findAll();
         return requirments;
     }
@@ -69,14 +64,12 @@ public class UCSBRequirementController extends ApiController {
     @ApiOperation(value = "Find single requirement via requirementCode")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
-    public ResponseEntity<String> getRequirementViaCode(@ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
+    public ResponseEntity<String> getRequirementViaCode(
+            @ApiParam("id") @RequestParam Long id) throws JsonProcessingException {
         loggingService.logMethod();
     
-        UCSBRequirementOrError  reqOrErr =new UCSBRequirementOrError(id);
+        UCSBRequirementOrError  reqOrErr = new UCSBRequirementOrError(id);
 
-        //also need to make method doesRequirementExist()
-        
-        reqOrErr = doesRequirementExist(reqOrErr);
         reqOrErr = doesRequirementExist(reqOrErr);
         if (reqOrErr.error != null) {
             return reqOrErr.error;
@@ -101,11 +94,6 @@ public class UCSBRequirementController extends ApiController {
             @ApiParam("inactive") @RequestParam boolean inactive) {
         loggingService.logMethod();
         UCSBRequirement justMadeRequirment = new UCSBRequirement();
-
-        /*
-        CurrentUser currentUser = getCurrentUser();
-        log.info("currentUser={}", currentUser);
-        */
         justMadeRequirment.setRequirementCode(requirementCode);
         justMadeRequirment.setRequirementTranslation(requirementTranslation);
         justMadeRequirment.setCollegeCode(collegeCode);
@@ -114,10 +102,7 @@ public class UCSBRequirementController extends ApiController {
         justMadeRequirment.setUnits(units);
         justMadeRequirment.setInactive(inactive);
         UCSBRequirement savedRequirement = ucsbRequirementsRepository.save(justMadeRequirment);
-        return savedRequirement;
-    
-                
-        
+        return savedRequirement;        
     }
     public UCSBRequirementOrError doesRequirementExist(UCSBRequirementOrError reqOrErr){
         Optional<UCSBRequirement> optionalRequirement = ucsbRequirementsRepository.findById(reqOrErr.id);
@@ -129,30 +114,5 @@ public class UCSBRequirementController extends ApiController {
             reqOrErr.ucsbRequirement  = optionalRequirement.get();
         }
         return reqOrErr;
-        }
-    
-    
-    
-        
-    
-    
+    }   
 }
-
-/*
-private String requirementCode;
-  private String requirementTranslation;
-  private String collegeCode;
-  private String objCode;
-  private int courseCount;
-  private int units;
-  private boolean inactive;
- 
-
-requirementCode
-  requirementTranslation;
-  collegeCode;
-    objCode;
-    courseCount;
-    units;
-    inactive;
-  */

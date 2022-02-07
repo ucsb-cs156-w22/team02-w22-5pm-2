@@ -3,17 +3,14 @@ package edu.ucsb.cs156.team02.controllers;
 import edu.ucsb.cs156.team02.repositories.UserRepository;
 import edu.ucsb.cs156.team02.testconfig.TestConfig;
 import edu.ucsb.cs156.team02.ControllerTestCase;
-import edu.ucsb.cs156.team02.controllers.UCSBRequirementController.UCSBRequirementOrError;
 import edu.ucsb.cs156.team02.entities.UCSBRequirement;
 import edu.ucsb.cs156.team02.entities.User;
 import edu.ucsb.cs156.team02.repositories.UCSBRequirementRepository;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -22,9 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import org.mockito.stubbing.OngoingStubbing;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,10 +37,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
     @MockBean
     UserRepository userRepository; 
 
-    @MockBean
-    UCSBRequirementController reqCon;
-
-// Authorization tests for /api/UCSBRequirements/admin/all
+// Authorization tests for /api/UCSBRequirements/all
     @Test
     public void api_UCSBRequirement_all__logged_out__returns_403() throws Exception {
         mockMvc.perform(get("/api/UCSBRequirements/all"))
@@ -78,14 +70,14 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
     @Test
     public void api_UCSBRequirements_all__user_logged_in() throws Exception {
 
-        // arrange
-        UCSBRequirement req1 = UCSBRequirement.builder().requirementCode("requirementCode").requirementTranslation("requirementTranslation").collegeCode("collegeCode").objCode("objCode").courseCount(0).courseCount(0).units(0).inactive(true).build();
-        UCSBRequirement req2 = UCSBRequirement.builder().requirementCode("requirementCode2").requirementTranslation("requirementTranslation2").collegeCode("collegeCode2").objCode("objCode2").courseCount(2).courseCount(2).units(2).inactive(false).build();
+        // arrange 
+        UCSBRequirement req1 = UCSBRequirement.builder().requirementCode("requirementCode 1").requirementTranslation("requirementTranslation 1").collegeCode("collegeCode 1").objCode("objCode 1").courseCount(1).units(1).inactive(true).id(1L).build();
+        UCSBRequirement req2 = UCSBRequirement.builder().requirementCode("requirementCode 2").requirementTranslation("requirementTranslation 2").collegeCode("collegeCode 2").objCode("objCode 2").courseCount(2).units(2).inactive(true).id(1L).build();
 
         
-        ArrayList<UCSBRequirement> justMadeUCSBRequirements = new ArrayList<>();
-        justMadeUCSBRequirements.addAll(Arrays.asList(req1, req2));
-        when(ucsbRequirementRepository.findAll()).thenReturn(justMadeUCSBRequirements);
+        ArrayList<UCSBRequirement> expectedUCSBRequirements = new ArrayList<>();
+        expectedUCSBRequirements.addAll(Arrays.asList(req1, req2));
+        when(ucsbRequirementRepository.findAll()).thenReturn(expectedUCSBRequirements);
 
         // act
         MvcResult response = mockMvc.perform(get("/api/UCSBRequirements/all"))
@@ -93,7 +85,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
 
         // assert
         verify(ucsbRequirementRepository, times(1)).findAll();
-        String expectedJson = mapper.writeValueAsString(justMadeUCSBRequirements);
+        String expectedJson = mapper.writeValueAsString(expectedUCSBRequirements);
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
@@ -112,6 +104,7 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
                 .courseCount(1)
                 .units(1)
                 .inactive(true)
+                .id(0L)
                 .build();
 
         when(ucsbRequirementRepository.save(eq(expectedReq))).thenReturn(expectedReq);
@@ -167,32 +160,18 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
     public void api_Req__user_logged_in__search_for_req_that_does_not_exist() throws Exception {
 
             // arrange
-                                                                                //make 42e not f
-            //UCSBRequirement req1 = UCSBRequirement.builder().requirementCode("42e").requirementTranslation("requirementTranslation").collegeCode("collegeCode").objCode("objCode").courseCount(1).courseCount(1).units(1).inactive(true).build();
-            //User u = currentUserService.getCurrentUser().getUser();
-            //UCSBRequirement req1 = UCSBRequirement.builder().requirementCode("42e").id(7L).requirementTranslation("requirementTranslation").collegeCode("collegeCode").objCode("objCode").courseCount(1).courseCount(1).units(666).inactive(true).build();
-            //ArrayList<UCSBRequirement> justMadeUCSBRequirements = new ArrayList<>();
-            //justMadeUCSBRequirements.addAll(Arrays.asList(req1));
-            //when( ucsbRequirementRepository.findById(42L)).thenReturn(null);
-            
-            //HERE WHY ISN'T THE SWAP HAPPENING
-            //when(ucsbRequirementRepository.findById(eq(666L))).thenReturn(null);
-            //optional.isempty wasn't working. Wouldn't swap and it would still find the value;
-            
-            when(ucsbRequirementRepository.findById(eq(666L))).thenReturn(Optional.empty());
-            //when(reqCon.doesRequirementExist()) .findById(eq(666L))).thenReturn(Optional.empty());
 
-            //when(ucsbRequirementRepository.findByRequirementCode("42f")).thenReturn(justMadeUCSBRequirements);
+            when(ucsbRequirementRepository.findById(eq(7L))).thenReturn(Optional.empty());
 
             // act
-            MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=666"))
+            MvcResult response = mockMvc.perform(get("/api/UCSBRequirements?id=7"))
                             .andExpect(status().isBadRequest()).andReturn();
 
             // assert
 
-            verify(ucsbRequirementRepository, times(1)).findById(666L);
+            verify(ucsbRequirementRepository, times(1)).findById(7L);
             String responseString = response.getResponse().getContentAsString();
-            assertEquals("UCSBRequirement with ID 666 not found", responseString);
+            assertEquals("UCSBRequirement with id 7 not found", responseString);
     }
 
 }
