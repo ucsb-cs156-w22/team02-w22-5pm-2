@@ -117,6 +117,32 @@ public class UCSBRequirementController extends ApiController {
         return reqOrErr;
     }   
 
+    // put
+    @ApiOperation(value = "Update a single UCSBRequirement")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putUCSBRequirement(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBRequirement incomingUCSBRequirement) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        UCSBRequirementOrError roe = new UCSBRequirementOrError(id);
+
+        roe = doesUCSBRequirementExist(roe);
+        if (roe.error != null) {
+            return roe.error;
+        }
+        incomingUCSBRequirement.setId(id);
+        UCSBRequirementRepository.save(incomingUCSBRequirement);
+
+        String body = mapper.writeValueAsString(incomingUCSBRequirement);
+        return ResponseEntity.ok().body(body);
+    }
+
+
+
+
+
 
 //delete
 
