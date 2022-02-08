@@ -173,6 +173,48 @@ public class UCSBRequirementControllerTests extends ControllerTestCase {
             String responseString = response.getResponse().getContentAsString();
             assertEquals("UCSBRequirement with id 7 not found", responseString);
     }
+    
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_UCSBRequirement__user_logged_in__delete_UCSBRequirement() throws Exception {
+        // arrange
+
+        UCSBRequirement req1 = UCSBRequirement.builder().requirementCode("42e").id(7L).requirementTranslation("requirementTranslation").collegeCode("collegeCode").objCode("objCode").courseCount(1).courseCount(1).units(7).inactive(true).build();
+        when(ucsbRequirementRepository.findById(eq(7L))).thenReturn(Optional.of(req1));
+
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(ucsbRequirementRepository, times(1)).findById(7L);
+        verify(ucsbRequirementRepository, times(1)).deleteById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("UCSBRequirement with id 7 deleted", responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void api_UCSBRequirement__user_logged_in__delete_UCSBRequirement_that_does_not_exist() throws Exception {
+        // arrange
+        when(ucsbRequirementRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                delete("/api/UCSBRequirements?id=7")
+                        .with(csrf()))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        // assert
+        verify(ucsbRequirementRepository, times(1)).findById(7L);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals("UCSBRequirement with id 7 not found", responseString);
+    }
+
 
 }
 
