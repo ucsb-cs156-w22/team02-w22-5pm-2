@@ -114,6 +114,28 @@ public class CollegiateSubredditController extends ApiController {
         return ResponseEntity.ok().body(String.format("collegiateSubreddit with id %d deleted", id));
     }
 
+    @ApiOperation(value = "Update a single CollegiateSubreddit")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putCollegiateSubredditById(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid CollegiateSubreddit incomingCollegiateSubreddit) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        CollegiateSubbreditOrError coe = new CollegiateSubbreditOrError(id);
+
+        coe = doesCollegiateSubredditExist(coe);
+        if (coe.error != null) {
+            return coe.error;
+        }
+        incomingCollegiateSubreddit.setId(id);
+        collegiateSubredditRepository.save(incomingCollegiateSubreddit);
+
+        String body = mapper.writeValueAsString(incomingCollegiateSubreddit);
+        return ResponseEntity.ok().body(body);
+    }
+
+
     /**
      * Pre-conditions: coe.id is value to look up, coe.collegiatesubreddit and coe.error are null
      * 

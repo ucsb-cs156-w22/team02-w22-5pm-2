@@ -1,6 +1,8 @@
 package edu.ucsb.cs156.team02.controllers;
 
 import edu.ucsb.cs156.team02.entities.UCSBRequirement;
+import edu.ucsb.cs156.team02.entities.User;
+import edu.ucsb.cs156.team02.models.CurrentUser;
 import edu.ucsb.cs156.team02.repositories.UCSBRequirementRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +18,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -116,6 +120,32 @@ public class UCSBRequirementController extends ApiController {
         }
         return reqOrErr;
     }   
+
+    // put
+    @ApiOperation(value = "Update a single UCSBRequirement")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("")
+    public ResponseEntity<String> putUCSBRequirement(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid UCSBRequirement incomingUCSBRequirement) throws JsonProcessingException {
+        loggingService.logMethod();
+
+        UCSBRequirementOrError roe = new UCSBRequirementOrError(id);
+
+        roe = doesRequirementExist(roe);
+        if (roe.error != null) {
+            return roe.error;
+        }
+        incomingUCSBRequirement.setId(id);
+        ucsbRequirementsRepository.save(incomingUCSBRequirement);
+
+        String body = mapper.writeValueAsString(incomingUCSBRequirement);
+        return ResponseEntity.ok().body(body);
+    }
+
+
+
+
 
 
 //delete
