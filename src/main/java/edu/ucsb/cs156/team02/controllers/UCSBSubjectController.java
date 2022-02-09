@@ -120,6 +120,25 @@ public class UCSBSubjectController extends ApiController {
         String body = mapper.writeValueAsString(incomingUCSBSubject);
         return ResponseEntity.ok().body(body);
     }
+    
+    @ApiOperation(value = "Delete a UCSBSubject")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("")
+    public ResponseEntity<String> deleteUCSBSubject(
+            @ApiParam("id") @RequestParam Long id) {
+        loggingService.logMethod();
+
+        //usoe <--> UCSBSubjectOrError"
+        UCSBSubjectOrError usoe = new UCSBSubjectOrError(id);
+
+        usoe = doesUCSBSubjectExist(usoe);
+        if (usoe.error != null) {
+            return usoe.error;
+        }
+
+        ucsbSubjectRepository.deleteById(id);
+        return ResponseEntity.ok().body(String.format("ucsbSubject with id %d deleted", id));
+    }
 
     /**
      * Pre-conditions: coe.id is value to look up, coe.collegiatesubreddit and
