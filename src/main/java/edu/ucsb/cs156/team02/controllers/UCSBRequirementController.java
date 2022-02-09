@@ -137,7 +137,7 @@ public class UCSBRequirementController extends ApiController {
             return roe.error;
         }
         incomingUCSBRequirement.setId(id);
-        UCSBRequirementRepository.save(incomingUCSBRequirement);
+        ucsbRequirementsRepository.save(incomingUCSBRequirement);
 
         String body = mapper.writeValueAsString(incomingUCSBRequirement);
         return ResponseEntity.ok().body(body);
