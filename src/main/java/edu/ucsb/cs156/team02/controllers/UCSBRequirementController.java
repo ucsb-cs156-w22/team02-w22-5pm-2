@@ -132,7 +132,7 @@ public class UCSBRequirementController extends ApiController {
 
         UCSBRequirementOrError roe = new UCSBRequirementOrError(id);
 
-        roe = doesUCSBRequirementExist(roe);
+        roe = doesRequirementExist(roe);
         if (roe.error != null) {
             return roe.error;
         }
