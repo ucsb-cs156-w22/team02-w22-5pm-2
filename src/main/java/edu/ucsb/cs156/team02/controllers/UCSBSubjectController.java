@@ -137,7 +137,7 @@ public class UCSBSubjectController extends ApiController {
         }
 
         ucsbSubjectRepository.deleteById(id);
-        return ResponseEntity.ok().body(String.format("ucsbSubject with id %d deleted", id));
+        return ResponseEntity.ok().body(String.format("UCSBSubject with id %d deleted", id));
     }
 
     /**
